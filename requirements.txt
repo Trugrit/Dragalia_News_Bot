@@ -1,3 +1,4 @@
+django-scheduler
 beautifulsoup4
 selenium
 pandas
