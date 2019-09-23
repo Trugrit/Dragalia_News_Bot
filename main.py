@@ -3,6 +3,8 @@ import config
 import pandas as pd
 from bs4 import BeautifulSoup
 from selenium import webdriver
+import schedule
+import time
 
 
 def authenticate():
@@ -66,4 +68,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    schedule.every().hour.do(main)
+    
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
