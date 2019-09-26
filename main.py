@@ -3,6 +3,7 @@ import config
 import pandas as pd
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 import schedule
 import time
 
@@ -27,7 +28,7 @@ def reddit_posting(title, url):
 
 
 def get_website_data():
-    browser = webdriver.Chrome()
+    browser = webdriver.Chrome(ChromeDriverManager().install())
     browser.get('https://dragalialost.com/en/news/')
 
     c = browser.page_source
