@@ -3,7 +3,6 @@ import config
 import pandas as pd
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
 import schedule
 import time
 
@@ -28,7 +27,7 @@ def reddit_posting(title, url):
 
 
 def get_website_data():
-    browser = webdriver.Chrome(ChromeDriverManager().install())
+    browser = webdriver.Chrome()
     browser.get('https://dragalialost.com/en/news/')
 
     c = browser.page_source
@@ -38,17 +37,17 @@ def get_website_data():
 
 
 def scrape_data(soup):
-    articles = soup.find_all("article")
+    articles = soup.find_all('div', {"class": 'inner'})[0].find_all('li')
     df = pd.read_csv('data.csv')
 
     data = []
     for i, x in enumerate(articles):
         link = 'https://dragalialost.com' + articles[i].find('a').get('href')
-        title = articles[i].find('div', {"class": 'title'}).text
+        title = articles[i].find('a').find('p').text.strip()
 
         if link not in list(df['link']):
             try:
-                reddit_posting(title, link)
+                # reddit_posting(title, link)
                 print(f'Posting\n{title}: {link}')
 
             except Exception as e:
@@ -58,19 +57,18 @@ def scrape_data(soup):
         data.append([link, title])
 
     new_df = pd.DataFrame(data, columns=['link', 'title'])
-    df = pd.concat([df, new_df], ignore_index=True, sort=False)
+    df = pd.concat([df, new_df], ignore_index=True)
     df.drop_duplicates('link', inplace=True)
     df.to_csv('data.csv', index=False)
 
 
 def main():
-    soup = get_website_data()
-    scrape_data(soup)
+    while True:
+        print('Checking... ')
+        soup = get_website_data()
+        scrape_data(soup)
+        time.sleep(60*60)
 
 
 if __name__ == '__main__':
-    schedule.every().hour.do(main)
-    
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    main()
