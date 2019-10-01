@@ -47,7 +47,7 @@ def scrape_data(soup):
 
         if link not in list(df['link']):
             try:
-                # reddit_posting(title, link)
+                reddit_posting(title, link)
                 print(f'Posting\n{title}: {link}')
 
             except Exception as e:
