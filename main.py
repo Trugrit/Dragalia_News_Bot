@@ -3,8 +3,8 @@ import config
 import pandas as pd
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import schedule
-import time
+from datetime import datetime, time
+from time import sleep
 
 
 def authenticate():
@@ -47,7 +47,7 @@ def scrape_data(soup):
 
         if link not in list(df['link']):
             try:
-                reddit_posting(title, link)
+                # reddit_posting(title, link)
                 print(f'Posting\n{title}: {link}')
 
             except Exception as e:
@@ -63,11 +63,14 @@ def scrape_data(soup):
 
 
 def main():
+    check_site = time(14, 0, 0)
     while True:
-        print('Checking... ')
-        soup = get_website_data()
-        scrape_data(soup)
-        time.sleep(60*60)
+        now = datetime.now()
+        if check_site.hour == now.hour and check_site.minute == now.minute:
+            print('Checking... ')
+            soup = get_website_data()
+            scrape_data(soup)
+        sleep(1)
 
 
 if __name__ == '__main__':
